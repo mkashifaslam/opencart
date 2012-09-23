@@ -1,0 +1,53 @@
+<modification>
+	<id>Filter module add function to backup module</id>
+	<version>1.5.x</version>
+	<vqmver>2.1.7</vqmver>
+	<author>Henry Motu</author>
+	<file name="admin/model/tool/backup.php">
+		<operation>
+			<search position="before"><![CDATA[public function restore($sql) {]]></search>
+			<add><![CDATA[
+public function addFilterTables(){
+$query = '';
+$query = <<<'EOF'
+CREATE TABLE IF NOT EXISTS filter_attribute_to_category (
+  attribute_id int(11) NOT NULL,
+  category_id int(11) NOT NULL,
+  UNIQUE KEY attribute_id (attribute_id,category_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+EOF;
+$this->db->query($query);
+$query = <<<'EOF'
+CREATE TABLE IF NOT EXISTS filter_attribute_to_values (
+  attribute_id int(11) NOT NULL,
+  value varchar(64) COLLATE utf8_bin NOT NULL,
+  sort_order int(11) NOT NULL DEFAULT '100',
+  name varchar(128) COLLATE utf8_bin NOT NULL DEFAULT 'empty',
+  UNIQUE KEY attribute_id (attribute_id,value)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+EOF;
+$this->db->query($query);
+$query = <<<'EOF'
+CREATE TABLE IF NOT EXISTS filter_attribute_type (
+  attribute_id int(11) NOT NULL,
+  type_id int(5) NOT NULL DEFAULT '0',
+  UNIQUE KEY attribute_id (attribute_id,type_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+EOF;
+$this->db->query($query);
+$query = <<<'EOF'
+REPLACE INTO filter_attribute_to_values (attribute_id, value, sort_order, name) VALUES
+(-1, '0-200', 1, '"<< ".$this->currency->format(200)'),
+(-1, '1000-1500', 6, '$this->currency->format(1000)." - ".$this->currency->format(1500)'),
+(-1, '1500-10000', 7, '$this->currency->format(1500)." >>"'),
+(-1, '200-400', 2, '$this->currency->format(200)." - ".$this->currency->format(400)'),
+(-1, '400-600', 3, '$this->currency->format(400)." - ".$this->currency->format(600)'),
+(-1, '600-800', 4, '$this->currency->format(600)." - ".$this->currency->format(800)'),
+(-1, '800-1000', 5, '$this->currency->format(800)." - ".$this->currency->format(1000)');
+EOF;
+$this->db->query($query);
+}
+			]]></add>
+		</operation>
+	</file>
+</modification>

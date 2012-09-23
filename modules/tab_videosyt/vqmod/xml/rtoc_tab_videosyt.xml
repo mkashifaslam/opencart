@@ -1,0 +1,205 @@
+<modification>
+	<id>Tab_VideosYT</id>
+	<version>1.2</version>
+	<vqmver>2.1</vqmver>
+	<author>Salvador Reyes</author>
+	<file name="admin/language/*/catalog/product.php">
+		<operation>
+			<search position="before"><![CDATA[?>]]></search>
+			<add><![CDATA[$_['tab_videosyt'] = 'Videos';]]></add>
+		</operation>
+	</file>	
+	<file name="catalog/language/english/product/product.php">
+		<operation>
+			<search position="before"><![CDATA[?>]]></search>
+			<add><![CDATA[$_['tab_videosyt'] = 'Videos';]]></add>
+		</operation>
+	</file>	
+	<file name="catalog/language/russian/product/product.php">
+		<operation>
+			<search position="before"><![CDATA[?>]]></search>
+			<add><![CDATA[$_['tab_videosyt'] = 'Видео';]]></add>
+		</operation>
+	</file>	
+	
+	
+	<file name="admin/controller/catalog/product.php">
+		<operation>
+			<search position="before" index="2"><![CDATA[if (isset($this->error['warning'])) {]]></search>
+			<add><![CDATA[$this->data['tab_videosyt'] = $this->language->get('tab_videosyt');]]></add>
+		</operation>
+		<operation>
+			<search position="before" index="1"><![CDATA[$this->template = 'catalog/product_form.tpl';]]></search>
+			<add><![CDATA[
+    	if (isset($this->request->post['videosyt'])) {
+      		$this->data['videosyt'] = $this->request->post['videosyt'];
+    	} elseif (!empty($product_info)) {
+			$this->data['videosyt'] = $product_info['videosyt'];
+		} else {
+      		$this->data['videosyt'] = '';
+    	}	
+		
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" index="1"><![CDATA[public function index() {]]></search>
+			<add><![CDATA[
+			protected function dbCheck(){
+				$query = $this->db->query("SHOW COLUMNS FROM `".DB_PREFIX."product` LIKE 'videosyt'");
+				if(!$query->num_rows){ $this->db->query("ALTER TABLE `".DB_PREFIX."product` ADD `videosyt` TEXT NOT NULL");	}
+						
+			}
+					
+			]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="after" index="1"><![CDATA[public function index() {]]></search>
+			<add><![CDATA[$this->dbCheck();]]>
+			</add>
+		</operation>
+	</file>
+	<file name="admin/model/catalog/product.php">
+		<operation>
+			<search position="after" index="1"><![CDATA[$product_id = $this->db->getLastId();]]></search>
+			<add><![CDATA[
+if (isset($data['videosyt'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET videosyt = '" . $this->db->escape($data['videosyt']) . "' WHERE product_id = '" . (int)$product_id . "'");
+		}			]]></add>
+		</operation>
+		<operation>
+			<search position="after" index="1"><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "product_description WHERE product_id = '" . (int)$product_id . "'");]]></search>
+			<add><![CDATA[
+if (isset($data['videosyt'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET videosyt = '" . $this->db->escape($data['videosyt']) . "' WHERE product_id = '" . (int)$product_id . "'"); } ]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/catalog/product_form.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<a href="#tab-image"><?php echo $tab_image; ?></a>]]></search>
+			<add><![CDATA[<a href="#tab-image"><?php echo $tab_image; ?></a><a href="#tab-videosyt"><?php echo $tab_videosyt; ?></a>]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[</form>]]></search>
+			<add><![CDATA[
+			<div id="tab-videosyt">Ex.: http://www.youtube.com/watch?v=XXXXXXXX<br /><textarea name="videosyt" cols="80" rows="10"><?php echo $videosyt; ?></textarea>
+			<br>
+			<br>
+			<div style="padding:5px; width:790px; border:3px solid #009bf4; -moz-box-shadow:3px 3px 5px 3px #eee; -webkit-box-shadow: 3px 3px 5px 3px #eee;   box-shadow: 3px 3px 5px 3px #eee;">
+			<i>Example: http://www.youtube.com/watch?v=pGW7zug77B8|SCATMAN||</i><br>
+			<i>Example: http://www.youtube.com/watch?v=FhsUMdeEpLQ|ChillOut & Lounge||, http://www.youtube.com/watch?v=QVZK7-xGFio|DeepHouse||</i><br>
+			<i>Example: http://www.youtube.com/watch?v=FhsUMdeEpLQ|||</i>
+			</div>
+			</div>
+			
+			</form>
+			]]></add>
+		</operation>
+	</file>
+	<file name="catalog/model/catalog/product.php">
+	  <operation>
+	    <search position="after" index="1"><![CDATA['date_modified'    => $query->row['date_modified'],]]></search>
+	    <add><![CDATA['videosyt'    => $query->row['videosyt'],]]></add>
+	  </operation>
+	</file>
+	<file name="catalog/controller/product/product.php">
+		<operation>
+			<search position="after"><![CDATA[$this->data['tab_description'] = $this->language->get('tab_description');]]></search>
+			<add><![CDATA[$this->data['tab_videosyt'] = $this->language->get('tab_videosyt');
+			$this->data['tab_videosyt_ver'] = $this->language->get('tab_videosyt_ver');]]></add>
+		</operation>
+				
+		<operation>
+			<search position="after"><![CDATA[$this->data['points'] = $product_info['points'];]]></search>
+			<add><![CDATA[
+			if($product_info['videosyt'] != "" OR NULL){
+			$this->data['youtubes'] = array();
+			$youtubes = explode(',',$product_info['videosyt']);
+			$this->data['youtubes'] = $youtubes;
+			}else{
+			$youtubes = 0;
+			}
+					
+			]]></add>
+		</operation>
+	</file>
+		
+	<file name="catalog/view/theme/*/template/product/product.tpl">
+		<operation>
+			<search position="after" offset="3"><![CDATA[<a href="#tab-description"><?php echo $tab_description; ?></a>]]></search>
+			<add><![CDATA[<?php if(isset($youtubes)){
+									if(count($youtubes) > 0){ ?>
+			<a href="#tab-videosyt"><?php echo $tab_videosyt; ?> (<?php echo count($youtubes); ?>)</a>
+			<?php } 
+			} ?>]]></add>
+		</operation>
+		
+	
+		<operation>
+			<search position="after"><![CDATA[<div id="tab-description" class="tab-content"><?php echo $description; ?></div>]]></search>
+			<add><![CDATA[
+			
+			<?php if(isset($youtubes)){
+			if(count($youtubes)){ ?>
+			<div id="tab-videosyt" class="tab-content">
+			<?php 
+			$colorbox = 1;
+				foreach($youtubes as $youtube){ 
+				$code = explode('=',$youtube);
+				
+				/**  SOLO CODE YOUTUBE **/
+				$cadena_yt = $youtube;
+				$maximo_yt = strlen ($cadena_yt);
+				$ide_yt = "=";
+				$ide2_yt = "|";
+				$total_yt = strpos($cadena_yt,$ide_yt);
+				$total2_yt = stripos($cadena_yt,$ide2_yt);
+				$total3_yt = ($maximo_yt - $total2_yt);
+				$code_yt = substr ($cadena_yt,$total_yt+1,-$total3_yt);
+				/***************************************************/
+
+				
+				/**  SOLO TITULO **/
+				$cadena = $code[1];
+				$maximo = strlen ($cadena);
+				$ide = "|";
+				$ide2 = "||";
+				$total = strpos($cadena,$ide);
+				$total2 = stripos($cadena,$ide2);
+				$total3 = ($maximo - $total2);
+				$titulo = substr($cadena,$total+1,-$total3);
+				/******************************************/
+							
+					if(!empty($code[0])){
+						if(!$colorbox){//normal display	?>
+							<object width="640" height="385"><param name="movie" value="http://www.youtube.com/v/<?php echo $code_yt; ?>?fs=1&amp;hl=es_"></param>
+							<param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param>
+							<embed src="http://www.youtube.com/v/<?php echo $code_yt; ?>?fs=1&amp;hl=es_ES" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="385"></embed>
+							</object>
+						<?php
+						} else{//color box ?>
+						<div style="float:left; padding:0 5px 0 2px;">
+							<a title="<?php echo $titulo; ?>" class="youtube" href="http://www.youtube.com/v/<?php echo $code_yt; ?>?fs=1&amp;width=640&amp;height=480&amp;hl=es_ES&amp;iframe=true&amp;rel=0"><img src="http://img.youtube.com/vi/<?php echo $code_yt; ?>/hqdefault.jpg" alt="<?php echo $titulo; ?>" width="205"/></a></div>
+						<?php
+						}
+					}
+				} ?>
+			</div>
+			<?php }
+					} ?>		
+			
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[			
+			<script type="text/javascript">
+		$(document).ready(function(){
+			$(".youtube").colorbox({iframe:true, width:"640", height:"480",transition:"fade"});
+		});
+		</script>]]>
+		</add>
+		</operation>
+
+	</file>
+</modification>
