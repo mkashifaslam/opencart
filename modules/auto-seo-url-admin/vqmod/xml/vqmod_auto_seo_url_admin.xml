@@ -1,0 +1,52 @@
+<modification>
+	<id>Auto seo url in admin section</id>
+	<version>1.5.x</version>
+	<vqmver>2.1.7</vqmver>
+	<author>Henry Motu</author>
+	<file name="admin/view/template/catalog/information_form.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<td><input type="text" name="information_description[<?php echo $language['language_id']; ?>][title]" size="100" value="<?php echo isset($information_description[$language['language_id']]) ? $information_description[$language['language_id']]['title'] : ''; ?>" />]]></search>
+			<add><![CDATA[<td><input type="text"  id="fld_name" onkeyup="makeSEOlink('fld_name','fld_seo')" name="information_description[<?php echo $language['language_id']; ?>][title]" size="100" value="<?php echo isset($information_description[$language['language_id']]) ? $information_description[$language['language_id']]['title'] : ''; ?>" />
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[<script type="text/javascript" src="view/javascript/motaSeoURL.js"></script>
+			]]></add>
+		</operation>
+		<operation>
+		  <search position="replace"><![CDATA[<td><input type="text" name="keyword" value="<?php echo $keyword; ?>" /></td>]]></search>
+		  <add><![CDATA[<td><input type="text"  id="fld_seo" name="keyword" value="<?php echo $keyword; ?>" /></td>]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/catalog/product_form.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<td><input type="text" name="product_description[<?php echo $language['language_id']; ?>][name]" size="100" value="<?php echo isset($product_description[$language['language_id']]) ? $product_description[$language['language_id']]['name'] : ''; ?>" />]]></search>
+			<add><![CDATA[<td><input type="text" name="product_description[<?php echo $language['language_id']; ?>][name]" size="100" id="fld_name" onkeyup="makeSEOlink('fld_name','fld_seo')" value="<?php echo isset($product_description[$language['language_id']]) ? $product_description[$language['language_id']]['name'] : ''; ?>" />]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[<script type="text/javascript" src="view/javascript/motaSeoURL.js"></script>
+			]]></add>
+		</operation>
+		<operation>
+		  <search position="replace"><![CDATA[<td><input type="text" name="keyword" value="<?php echo $keyword; ?>" /></td>]]></search>
+		  <add><![CDATA[<td><input type="text" id="fld_seo" name="keyword" value="<?php echo $keyword; ?>" /></td>]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/catalog/category_form.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<td><input type="text" name="category_description[<?php echo $language['language_id']; ?>][name]" size="100" value="<?php echo isset($category_description[$language['language_id']]) ? $category_description[$language['language_id']]['name'] : ''; ?>" />]]></search>
+			<add><![CDATA[<td><input type="text"  id="fld_name" onkeyup="makeSEOlink('fld_name','fld_seo')" name="category_description[<?php echo $language['language_id']; ?>][name]" size="100" value="<?php echo isset($category_description[$language['language_id']]) ? $category_description[$language['language_id']]['name'] : ''; ?>" />]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[<script type="text/javascript" src="view/javascript/motaSeoURL.js"></script>
+			]]></add>
+		</operation>
+		<operation>
+		  <search position="replace"><![CDATA[<td><input type="text" name="keyword" value="<?php echo $keyword; ?>" /></td>]]></search>
+		  <add><![CDATA[<td><input type="text"  id="fld_seo" name="keyword" value="<?php echo $keyword; ?>" /></td>]]></add>
+		</operation>
+	</file>
+</modification>
